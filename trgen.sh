@@ -1,6 +1,6 @@
 #!/bin/sh
 
-binary="$1"
+binary="$(realpath $1)"
 dir="$2"
 
 MYDIR="$(realpath $(dirname $0))"
