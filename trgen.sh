@@ -35,6 +35,17 @@ gen_dir() {
     mkdir -p "$_d"/src
 }
 
+gen_make() {
+    local _b _fb
+
+    _fb="$1"
+    _b=$(basename "$_fb")
+    cat <<EOF
+TARGET="trace_${_b}"
+BINARY="$_fb"
+ARCH=\$(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/')
+EOF
+}
 trace_gen() {
     local _e _d _btf
 
@@ -44,7 +55,7 @@ trace_gen() {
     gen_dir "$_d"
     
     _btf=$(basename "$_e")
-    (cd "$_d"/src; extract_btf "$_e" "$_btf")
+    (cd "$_d"/src; gen_make "$_e" >Makefile)
 }
 
 trace_gen "$binary" "$dir"
