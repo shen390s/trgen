@@ -1,5 +1,5 @@
 TRAGET=trace_%BINARY%
-BINARY=%BINARY%
+BINARY=%FULL_PATH_BINARY%
 ARCH=$(shell uname -m |sed 's/x86_64/x86/' | sed -e 's/aarch64/arm64/')
 
 BPF_OBJ=$(TARGET:=.bpf.o)
