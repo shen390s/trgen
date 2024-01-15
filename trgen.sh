@@ -36,14 +36,15 @@ gen_dir() {
 }
 
 trace_gen() {
-    local _e _d
+    local _e _d _btf
 
     _e="$1"
     _d="$2"
 
     gen_dir "$_d"
     
-    (cd "$_d"/src; extract_btf "$_e" "$_e")
+    _btf=$(basename "$_e")
+    (cd "$_d"/src; extract_btf "$_e" "$_btf")
 }
 
 trace_gen "$binary" "$dir"
