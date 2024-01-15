@@ -16,7 +16,7 @@ extract_btf() {
     
     pahole --btf_encode_detached "$_btf.btf" \
            --btf_encode_force "$_binary"
-    sudo btftool btf dump file "$_btf.btf" \
+    sudo bpftool btf dump file "$_btf.btf" \
          format c >"$_btf.h"
 }
 
