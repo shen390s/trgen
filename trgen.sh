@@ -3,6 +3,8 @@
 binary="$1"
 dir="$2"
 
+MYDIR="$(dirname $0)"
+
 if [ -z "$binary" ]; then
     echo "Usage: $0 binary_file_with_debug_info [generate_dir]"
     exit 1
@@ -40,46 +42,12 @@ gen_make() {
 
     _fb="$1"
     _b=$(basename "$_fb")
-    cat <<EOF
-TARGET="trace_${_b}"
-BINARY="$_fb"
-ARCH=\$(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/')
 
-BPF_OBJ=${TARGET:=.bpf.o}
-USER_C =${TARGET:=.c}
-USER_SKEL=${TARGET:=.skel.h}
-
-all: ${TARGET}
-
-${TARGET}: ${USER_C} ${USER_SKEL} libbpf bpftool
-           \$(CC) -Wall -static -o ${TARGET} \
-                 -I. ${USER_C} -L../../bpftool/src/libbpf \
-                 -I../../bpftool/src/libbpf/include \
-                 -lbpf -lelf -lz
-
-%.bpf.o: %.bpf.c vmlinux.h
-         clang -target bpf \
-               -D__TARGET__ARCH_${ARCH} \
-               -I../../bpftool/src/libbpf/include \
-               -I. -Wall -O2 -g -o $@ -c $<
-
-${USER_SKEL}: ${BPF_OBJ}
-         ../../bpftool/src/bootstrap/bpftool gen skeleton $< >$@
-
-vmlinux.h:
-        ../../bpftool/src/bootstrap/bpftool btf dump file /sys/kernel/btf/vmlinux \
-                                           format c >vmlinux.h
-
-libbpf:
-        make -C ../../bpftool/libbpf/src
-
-bpftool:
-        make -C ../../bpftool/src
-
-clean:
-        - \$RM ${BPF_OBJ} ${TARGET} ${USER_SKEL} vmlinux
-EOF
+    cat $MYDIR/skel/Makefile | \
+        sed -e s@%FULL_PATH_BINARY%@$_fb@g | \
+        sed -e s@%BINARY%@$_b@g
 }
+
 trace_gen() {
     local _e _d _btf
 
