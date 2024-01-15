@@ -3,7 +3,7 @@
 binary="$1"
 dir="$2"
 
-MYDIR="$(dirname $0)"
+MYDIR="$(realpath $(dirname $0))"
 
 if [ -z "$binary" ]; then
     echo "Usage: $0 binary_file_with_debug_info [generate_dir]"
