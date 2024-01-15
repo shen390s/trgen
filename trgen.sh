@@ -52,7 +52,7 @@ USER_SKEL=${TARGET:=.skel.h}
 all: ${TARGET}
 
 ${TARGET}: ${USER_C} ${USER_SKEL} libbpf bpftool
-           $(CC) -Wall -static -o ${TARGET} \
+           \$(CC) -Wall -static -o ${TARGET} \
                  -I. ${USER_C} -L../../bpftool/src/libbpf \
                  -I../../bpftool/src/libbpf/include \
                  -lbpf -lelf -lz
